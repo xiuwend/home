@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>抽奖软件安绎特别版</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- 主菜单：喜庆红底 + 四按钮 + 快捷键 -->
+  <main id="view-main" class="view active">
+    <div class="main-bg"></div>
+    <div class="shortcuts-bar">
+      抽奖界面快捷键：【回车】或【空格】开始或停止抽奖　【F1】显示抽奖封面　【ESC】退出抽奖　【F8】显示抽奖结果　【F4】临时补奖
+    </div>
+    <div class="main-buttons">
+      <button type="button" class="btn-main" data-action="settings">抽奖设置</button>
+      <button type="button" class="btn-main" data-action="start">开始抽奖</button>
+      <button type="button" class="btn-main" data-action="redo">重新抽奖</button>
+      <button type="button" class="btn-main" data-action="exit">退出抽奖</button>
+    </div>
+  </main>
+
+  <!-- 抽奖设置 -->
+  <section id="view-settings" class="view">
+    <header class="settings-header">
+      <h1>抽奖设置</h1>
+      <p class="settings-hint">注：在抽奖界面可以直接拖拽排版</p>
+      <div class="header-links">
+        <a href="#" data-action="pwd" class="header-link">设置密码</a>
+        <a href="#" data-action="help" class="header-link">使用帮助</a>
+      </div>
+      <button type="button" class="btn-close" data-action="close-settings" title="关闭">×</button>
+    </header>
+    <div class="settings-tabs">
+      <button type="button" class="tab active" data-tab="basic">基础设置</button>
+      <button type="button" class="tab" data-tab="music">音乐设置</button>
+      <button type="button" class="tab" data-tab="cover">抽奖封面设置</button>
+      <button type="button" class="tab" data-tab="advanced">高级设置</button>
+    </div>
+    <div class="settings-body">
+      <div id="panel-basic" class="tab-panel active">
+        <div class="form-row">
+          <label>抽奖类型</label>
+          <label><input type="radio" name="lotteryType" id="lotteryTypeText" value="text" checked> 文字抽奖</label>
+          <label><input type="radio" name="lotteryType" id="lotteryTypeImage" value="image"> 图片抽奖</label>
+        </div>
+        <div class="form-block">
+          <h3>标题设置</h3>
+          <label><input type="checkbox" id="showMainTitle" checked> 显示主标题</label>
+          <input type="text" id="mainTitle" value="某某活动主标题" class="input-text"> <button type="button" class="btn-font" data-font-target="mainTitle" title="主标题字体">A</button><br>
+          <label><input type="checkbox" id="showSubTitle" checked> 显示副标题</label>
+          <input type="text" id="subTitle" value="某某活动副标题" class="input-text"> <button type="button" class="btn-font" data-font-target="subTitle" title="副标题字体">A</button>
+        </div>
+        <div class="form-row">
+          <label>抽奖滚动速度</label>
+          <input type="number" id="scrollSpeed" value="30" min="1" max="100" class="input-num"> <span class="hint">(数字越小速度越快)</span>
+        </div>
+        <div class="form-row">
+          <label>出奖方式</label>
+          <select id="repeatMode">
+            <option value="no-repeat" selected>不允许重复中奖</option>
+            <option value="allow-repeat">允许重复中奖</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>滚动名单</label>
+          <select id="scrollList">
+            <option value="all" selected>全部</option>
+          </select>
+        </div>
+        <div class="form-row name-list-row">
+          <button type="button" class="btn-primary" id="btnNameList">抽奖名单设置</button>
+          <span id="nameListCountWrap" class="name-list-count">已录入 <span id="nameListCount">0</span> 人</span>
+          <button type="button" class="btn-link" id="btnViewNameList">查看名单</button>
+          <span class="help-icon" title="点击「抽奖名单设置」录入或导入；「查看名单」打开名单查看与编辑">?</span>
+        </div>
+        <div class="form-split">
+          <div class="prize-list-panel">
+            <h3>奖项列表</h3>
+            <div class="toolbar"><span class="help-icon">?</span> <button type="button" class="btn-icon" data-action="prize-add" title="添加奖项">+</button> <button type="button" class="btn-icon" data-action="prize-remove" title="删除奖项">−</button> <button type="button" class="btn-icon" data-action="prize-up" title="上移">↑</button> <button type="button" class="btn-icon" data-action="prize-down" title="下移">↓</button></div>
+            <ul id="prizeList" class="prize-list">
+              <li class="active" data-id="1">特等奖</li>
+              <li data-id="2">一等奖</li>
+              <li data-id="3">二等奖</li>
+              <li data-id="4">三等奖</li>
+            </ul>
+            <p class="order-hint">开奖顺序 由低到高 <span class="arrow">↑</span></p>
+          </div>
+          <div class="prize-detail-panel">
+            <label><input type="checkbox" id="syncPrize"> 所有奖项同步设置</label>
+            <div class="form-row"><label><input type="checkbox" id="validatePrizeNames"> 奖项名称校验</label><span class="hint" title="开启后各奖项名称不可重复；若有多档同名奖项（如多个「一等奖」对应不同奖品）可关闭">（可开关，开启后名称不可重复）</span></div>
+            <div class="form-row"><label><input type="checkbox" checked> 显示 奖项名称:</label> <input type="text" id="prizeName" value="特等奖" class="input-text"> <button type="button" class="btn-font" data-font-target="prizeName" title="奖项/奖品名称字体">A</button></div>
+            <div class="form-row"><label>该奖项中奖数量:</label> <input type="number" id="prizeCount" value="1" class="input-num"></div>
+            <div class="form-row"><label>一次抽取数:</label> <input type="number" id="drawOnce" value="1" min="1" max="50" class="input-num"> <span class="hint">（最多50人）</span></div>
+            <div class="form-row"><label>显示列数:</label> <input type="number" id="displayCols" value="1" class="input-num"></div>
+            <div class="form-row"><label>中奖名单上间距:</label> <input type="text" id="marginTop" value="20" class="input-num"> 左间距: <input type="text" id="marginLeft" value="20" class="input-num"></div>
+            <div class="form-row"><label>对齐:</label> <select id="align"><option value="center">居中对齐</option><option value="left">左对齐</option><option value="right">右对齐</option></select></div>
+            <div class="form-row">左侧滚动提示字体 <button type="button" class="btn-font" data-font-target="winnerList" title="左侧滚动提示字体">A</button></div>
+            <h3>奖品设置</h3>
+            <div class="form-row"><label><input type="checkbox" checked> 显示 奖品名称:</label> <input type="text" id="giftName" value="苹果iPhone6一台" class="input-text"> <button type="button" class="btn-font" data-font-target="prizeName" title="奖品名称字体">A</button></div>
+            <div class="form-row"><label><input type="checkbox" id="showPrizeImage"> 显示 奖品图片</label>
+              <div class="img-placeholder prize-img-box" id="prizeImagePlaceholder" title="点击上传图片"><img id="prizeImagePreview" src="" alt=""><span class="prize-img-tip" id="prizeImageTip">点击上传</span></div>
+              <input type="file" id="prizeImageInput" accept="image/*" class="hidden">
+              高度: <input type="number" id="prizeImageHeight" value="200" min="60" max="700" class="input-num" style="width:60px"> px（投屏时不低于屏幕高度的 32%）</div>
+          </div>
+        </div>
+      </div>
+      <div id="panel-music" class="tab-panel">
+        <div class="form-block">
+          <h3>音乐设置</h3>
+          <div class="form-row">
+            <label>启动音乐</label>
+            <input type="file" id="musicStartInput" accept="audio/*" class="hidden">
+            <button type="button" class="btn-sm" id="btnMusicStart">选择文件</button>
+            <span id="musicStartLabel" class="music-file-label">未设置</span>
+            <button type="button" class="btn-sm btn-clear-inline" id="btnMusicStartClear" title="清除">清除</button>
+          </div>
+          <div class="form-row">
+            <label>滚动音乐</label>
+            <input type="file" id="musicScrollInput" accept="audio/*" class="hidden">
+            <button type="button" class="btn-sm" id="btnMusicScroll">选择文件</button>
+            <span id="musicScrollLabel" class="music-file-label">未设置</span>
+            <button type="button" class="btn-sm btn-clear-inline" id="btnMusicScrollClear" title="清除">清除</button>
+          </div>
+          <div class="form-row">
+            <label>中奖音乐</label>
+            <input type="file" id="musicWinInput" accept="audio/*" class="hidden">
+            <button type="button" class="btn-sm" id="btnMusicWin">选择文件</button>
+            <span id="musicWinLabel" class="music-file-label">未设置</span>
+            <button type="button" class="btn-sm btn-clear-inline" id="btnMusicWinClear" title="清除">清除</button>
+          </div>
+          <div class="form-row"><label><input type="checkbox" id="soundScroll" checked> 滚动时播放音效</label></div>
+          <div class="form-row"><label><input type="checkbox" id="soundWin" checked> 中奖时播放音效</label></div>
+        </div>
+      </div>
+      <div id="panel-cover" class="tab-panel">
+        <div class="form-block">
+          <h3>抽奖封面设置</h3>
+          <p class="hint">按 F1 时显示的封面。留空则使用基础设置中的主标题/副标题。</p>
+          <div class="form-row"><label>封面主标题:</label> <input type="text" id="coverTitle" class="input-text" style="width:280px" placeholder="留空则用基础设置的主标题"></div>
+          <div class="form-row"><label>主标题位置</label> 水平 <input type="number" id="coverTitleLeft" value="50" min="0" max="100" class="input-num" style="width:50px"> % 垂直 <input type="number" id="coverTitleTop" value="35" min="0" max="100" class="input-num" style="width:50px"> % <span class="hint">（50,50 为屏幕正中）</span></div>
+          <div class="form-row"><label>封面副标题:</label> <input type="text" id="coverSub" class="input-text" style="width:280px" placeholder="留空则用基础设置的副标题"></div>
+          <div class="form-row"><label>副标题位置</label> 水平 <input type="number" id="coverSubLeft" value="50" min="0" max="100" class="input-num" style="width:50px"> % 垂直 <input type="number" id="coverSubTop" value="70" min="0" max="100" class="input-num" style="width:50px"> %</div>
+          <h3>封面背景</h3>
+          <div class="form-row"><label>封面背景图片</label>
+            <button type="button" class="btn-primary" id="btnCoverBg">选择图片</button>
+            <input type="file" id="coverBgImageInput" accept="image/*" class="hidden">
+            <button type="button" class="btn-sm" id="btnCoverBgReset" title="恢复为默认渐变">恢复默认</button>
+            <span class="help-icon" title="仅 F1 封面背景；留空则使用下方「抽奖/封面背景」">?</span>
+          </div>
+          <h3>背景设置</h3>
+          <div class="form-row"><label>主页面背景</label>
+            <button type="button" class="btn-primary" id="btnMainBg">选择图片</button>
+            <input type="file" id="mainBgImageInput" accept="image/*" class="hidden">
+            <button type="button" class="btn-sm" id="btnMainBgReset" title="恢复为默认红金渐变">恢复默认</button>
+            <span class="help-icon" title="主菜单（四按钮页）的背景">?</span>
+          </div>
+          <div class="form-row"><label>抽奖/封面背景</label>
+            <button type="button" class="btn-primary" id="btnBg">背景图片</button>
+            <input type="file" id="bgImageInput" accept="image/*" class="hidden">
+            <select id="bgMode"><option value="stretch">拉伸</option><option value="tile">平铺</option><option value="center">居中</option></select>
+            <button type="button" class="btn-sm" id="btnBgReset" title="恢复为默认渐变背景">恢复默认背景</button>
+            <span class="help-icon" title="抽奖界面与封面的背景">?</span>
+          </div>
+          <h3>抽奖结果页设置</h3>
+          <div class="form-row"><label>获奖名单字体大小:</label> <input type="number" id="resultPageFontSize" value="16" min="12" max="72" class="input-num"> px</div>
+          <div class="form-row"><label><input type="checkbox" id="resultPageShowPrizeName" checked> 显示奖项与奖品名称</label></div>
+          <div class="form-row"><label>结果页奖项标题字体</label> <button type="button" class="btn-font" data-font-target="resultPageTitle" title="获奖页奖项名称字体与颜色">A</button> <span class="hint">（如：特等奖、一等奖等标题，可设颜色避免与红底混在一起）</span></div>
+          <div class="form-row"><label>结果页背景</label>
+            <button type="button" class="btn-primary" id="btnResultPageBg">选择图片</button>
+            <input type="file" id="resultPageBgImageInput" accept="image/*" class="hidden">
+            <button type="button" class="btn-sm" id="btnResultPageBgReset" title="恢复为默认灰底">恢复默认</button>
+            <span class="help-icon" title="按 F8 显示的抽奖结果页背景">?</span>
+          </div>
+        </div>
+      </div>
+      <div id="panel-advanced" class="tab-panel">
+        <div class="form-block">
+          <div class="form-row">
+            <button type="button" class="btn-primary" id="btnFixedPrize">奖品内定配置</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 抽奖进行界面：左奖品区 + 右获奖名单 -->
+  <section id="view-lottery" class="view view-lottery">
+    <div class="lottery-bg"></div>
+    <div class="lottery-header" data-drag-area="header">
+      <span class="lottery-drag-handle" title="拖拽移动">⋮⋮</span>
+      <div class="lottery-title" id="lotteryTitle">2024年迎新晚会抽奖</div>
+      <div class="lottery-subtitle" id="lotterySubtitle">— 活动现场</div>
+    </div>
+    <div class="lottery-panels">
+      <div class="lottery-left-panel" data-drag-area="left">
+        <div class="panel-title"><span class="lottery-drag-handle" title="拖拽移动">⋮⋮</span></div>
+        <div class="lottery-prize-card" id="lotteryPrizeInfo">
+          <div class="prize-level" id="lotteryPrizeLevel">三等奖</div>
+          <div class="prize-image-box"><img id="lotteryPrizeImg" src="" alt=""></div>
+          <div class="prize-name" id="lotteryPrizeName">IPAD</div>
+          <div class="prize-stats">参与人数: <span id="poolCount">0</span>　名额: <span id="prizeTotal">0</span>　已抽取: <span id="drawnCount">0</span>　未抽取: <span id="leftCount">0</span></div>
+        </div>
+        <div class="lottery-rolling-wrap">
+          <div class="lottery-names" id="lotteryNames"></div>
+        </div>
+        <div class="lottery-buttons-row">
+          <button type="button" class="btn-start-draw" id="btnStartDraw">开始抽奖</button>
+          <div class="lottery-temp-wrap">
+            <button type="button" class="btn-temp-prize" id="btnTempPrize" title="在下一奖项开始前可随时补奖">临时补奖 【F4】</button>
+          </div>
+        </div>
+        <div class="lottery-control-hint" id="lotteryControlHint">按 回车 或 空格 开始/停止</div>
+      </div>
+      <div class="lottery-right-panel" data-drag-area="right">
+        <div class="panel-title">获奖名单 <span class="lottery-drag-handle" title="拖拽移动">⋮⋮</span></div>
+        <div class="winners-meta">已获奖人数: <span id="winnersCount">0</span></div>
+        <div class="lottery-winners-grid" id="lotteryWinnersGrid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 抽奖封面（F1） -->
+  <section id="view-cover" class="view view-cover">
+    <div class="cover-bg"></div>
+    <div class="cover-title" id="coverTitleDisplay">欢迎来到活动现场</div>
+    <div class="cover-sub" id="coverSubDisplay">— 抽奖即将开始 —</div>
+  </section>
+
+  <!-- 抽奖结果页（F8） -->
+  <section id="view-results" class="view">
+    <div class="results-bg" id="resultsBgLayer" aria-hidden="true"></div>
+    <header class="results-header">
+      <h1>抽奖结果</h1>
+      <button type="button" class="btn-close" data-action="close-results">×</button>
+    </header>
+    <div class="results-body" id="resultsBody"></div>
+  </section>
+
+  <!-- 名单设置弹窗 -->
+  <dialog id="dlg-name-list">
+    <div class="dialog-header">
+      <h2>抽奖名单设置</h2>
+      <button type="button" class="btn-close" data-action="close-dlg">×</button>
+    </div>
+    <div class="dialog-body">
+      <p>每行一个姓名。可<strong>粘贴从 Excel 里复制的姓名列</strong>（纯文本），或点击下方<strong>「从文件导入」</strong>选择文件。</p>
+      <p class="name-import-tip"><strong>支持 .txt / .csv / .xlsx / .xls</strong>。若为 Excel 文件，请务必用「从文件导入」选择文件，<em>不要</em>把整个文件内容粘贴到框中（否则会显示乱码）。</p>
+      <p class="name-import-tip">系统会<strong>自动识别表格文件姓名列</strong>下的内容，无需手动选择列。</p>
+      <textarea id="nameListText" rows="12" placeholder="张三&#10;李四&#10;王五&#10;..."></textarea>
+      <div id="nameListImageBlock" class="name-list-image-block" style="display:none;">
+        <h4 class="name-list-image-title">图片抽奖 · 批量上传图片</h4>
+        <p class="hint">上传以<strong>人员姓名命名</strong>的图片即可，每人一张，<strong>文件名即抽奖姓名</strong>（如 张三.jpg、李四.png），无需先填名单。</p>
+        <button type="button" class="btn-primary" id="btnNameListImages">批量上传图片</button>
+        <button type="button" class="btn-sm btn-clear-inline" id="btnClearNameImages" title="清除已绑定的人员图片">清除图片</button>
+        <input type="file" id="nameListImagesInput" accept="image/*" multiple class="hidden">
+        <span id="nameListImagesCount" class="hint"></span>
+      </div>
+      <div class="dialog-actions">
+        <button type="button" class="btn-primary" data-action="import-names">从文件导入</button>
+        <button type="button" class="btn-sm btn-clear-inline" data-action="clear-names" title="清空抽奖名单">清除名单</button>
+        <button type="button" class="btn-primary" data-action="save-names">确定</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- 奖品内定提示弹窗（屏幕居中） -->
+  <dialog id="dlg-fixed-prize-msg" class="dlg-center">
+    <div class="dialog-body" style="text-align:center;padding:24px;">
+      <p style="margin:0 0 16px;font-size:18px;">你的皮是真厚</p>
+      <button type="button" class="btn-primary" data-action="close-fixed-prize-msg">确定</button>
+    </div>
+  </dialog>
+
+  <!-- 使用帮助弹窗 -->
+  <dialog id="dlg-help">
+    <div class="dialog-header">
+      <h2>使用帮助</h2>
+      <button type="button" class="btn-close" data-action="close-help">×</button>
+    </div>
+    <div class="dialog-body help-body">
+      <p><strong>快捷键</strong></p>
+      <ul>
+        <li>【回车】或【空格】 开始/停止抽奖</li>
+        <li>【F1】 显示抽奖封面</li>
+        <li>【ESC】 退出当前界面或返回主菜单</li>
+        <li>【F8】 显示抽奖结果</li>
+        <li>【F4】 临时补奖</li>
+      </ul>
+      <p><strong>基本流程</strong></p>
+      <ol>
+        <li>在「抽奖设置」→「抽奖名单设置」中录入或导入姓名。</li>
+        <li>在「基础设置」中调整主/副标题、滚动速度、奖项与每个奖项的中奖数量、一次抽取数等。</li>
+        <li>保存后关闭设置，点击「开始抽奖」进入抽奖界面，按回车开始滚动，再按一次停止并确定中奖者。</li>
+        <li>「重新抽奖」会清空所有已中奖记录，从第一个奖项重新开始。</li>
+      </ol>
+      <p>设置会自动保存，切换奖项或关闭设置页时都会写入。其它标签页（音乐设置、抽奖封面设置）中的选项同样会持久化。</p>
+    </div>
+  </dialog>
+
+  <!-- 设置密码弹窗 -->
+  <dialog id="dlg-pwd">
+    <div class="dialog-header">
+      <h2>设置密码</h2>
+      <button type="button" class="btn-close" data-action="close-pwd">×</button>
+    </div>
+    <div class="dialog-body">
+      <p class="hint">设置后，再次打开「抽奖设置」时需输入密码。留空并确定则取消密码。</p>
+      <div class="form-row"><label>新密码:</label> <input type="password" id="newPassword" class="input-text" placeholder="留空表示取消密码"></div>
+      <div class="dialog-actions">
+        <button type="button" class="btn-primary" data-action="save-pwd">确定</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- 临时补奖弹窗（仅抽奖页面可用） -->
+  <dialog id="dlg-temp-prize">
+    <div class="dialog-header">
+      <h2>临时补奖</h2>
+      <button type="button" class="btn-close" data-action="close-temp-prize">×</button>
+    </div>
+    <div class="dialog-body">
+      <p class="hint">配置后主界面会切换为本轮临时奖项，按空格开始/停止抽取，与正式抽奖相同。抽完后自动显示待开始的下一档正式奖项。</p>
+      <p class="hint" id="tempPrizePoolHint">当前奖池剩余 0 人</p>
+      <div class="form-row"><label>奖项名称:</label> <input type="text" id="tempPrizeName" value="临时补奖" class="input-text" placeholder="如：幸运奖、特别奖" style="width:180px"></div>
+      <div class="form-row"><label>本次抽取人数:</label> <input type="number" id="tempPrizeCount" value="1" min="1" class="input-num"> 人</div>
+      <div class="dialog-actions">
+        <button type="button" class="btn-primary" data-action="start-temp-prize">确定并开始</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- 字体设置弹窗 -->
+  <dialog id="dlg-font">
+    <div class="dialog-header">
+      <h2 id="dlgFontTitle">字体设置</h2>
+      <button type="button" class="btn-close" data-action="close-font">×</button>
+    </div>
+    <div class="dialog-body">
+      <div class="form-row"><label>字体:</label> <select id="fontFamily">
+        <option value="Microsoft YaHei">微软雅黑</option>
+        <option value="SimHei">黑体</option>
+        <option value="SimSun">宋体</option>
+        <option value="KaiTi">楷体</option>
+        <option value="FangSong">仿宋</option>
+        <option value="YouYuan">幼圆</option>
+        <option value="LiSu">隶书</option>
+        <option value="STXingkai">华文行楷</option>
+        <option value="STHupo">华文琥珀</option>
+        <option value="STCaiyun">华文彩云</option>
+        <option value="STXinwei">华文新魏</option>
+        <option value="STKaiti">华文楷体</option>
+        <option value="FZShuTi">方正舒体</option>
+        <option value="FZYaoTi">方正姚体</option>
+      </select></div>
+      <div class="form-row"><label>字号:</label> <input type="number" id="fontSize" value="24" min="12" max="120" class="input-num"> px</div>
+      <div class="form-row"><label>颜色:</label> <input type="color" id="fontColor" value="#000000" title="字体颜色"> <span id="fontColorHex">#000000</span></div>
+      <div class="form-row"><label><input type="checkbox" id="fontBold"> 加粗</label></div>
+      <div class="dialog-actions">
+        <button type="button" class="btn-primary" data-action="apply-font">确定</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js" crossorigin="anonymous"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
