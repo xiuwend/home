@@ -27,6 +27,7 @@
   "build": {
     "appId": "com.lottery.app",
     "productName": "活动抽奖",
+    "publish": null,
     "directories": {
       "output": "dist"
     },
