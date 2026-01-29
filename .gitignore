@@ -1,0 +1,18 @@
+# 构建产物（不要提交到 Git，单文件超 100MB 会推送失败）
+dist/
+
+# 依赖
+node_modules/
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/
+*.suo
+*.user
+
+# 可选：本地调试/临时文件
+.env
+.env.local
