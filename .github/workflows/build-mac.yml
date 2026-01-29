@@ -35,3 +35,16 @@ jobs:
             dist/*.dmg
             dist/*.zip
           if-no-files-found: warn
+
+      - name: Create Release and upload assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: mac-latest
+          name: macOS 构建 (活动抽奖)
+          draft: true
+          replace_assets: true
+          files: |
+            dist/*.dmg
+            dist/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
